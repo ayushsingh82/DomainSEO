@@ -11,7 +11,7 @@ const Navbar = () => {
             {/* Logo/Brand */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
-                <span className="text-xl font-bold" style={{ color: '#C6FC7B' }}>1Clob</span>
+                <span className="text-xl font-bold" style={{ color: '#C6FC7B' }}>samxdom</span>
               </Link>
             </div>
 
