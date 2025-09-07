@@ -17,13 +17,23 @@ const Navbar = () => {
 
             {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
-          
-          
-              <Link href="/swagger" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Swagger
+              <Link href="/competitions" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Competitions
               </Link>
-              <Link href="/price" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Price
+              <Link href="/leaderboard" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Leaderboard
+              </Link>
+              <Link href="/predict" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Predict
+              </Link>
+              <Link href="/oracles" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Oracles
+              </Link>
+              <Link href="/rewards" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Rewards
+              </Link>
+              <Link href="/profile" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Profile
               </Link>
             </div>
 
