@@ -1,8 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 export default function Rewards() {
   const rewardTiers = [
@@ -181,10 +179,7 @@ export default function Rewards() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#C6FC7B' }}>
-      <Navbar />
-      
-      <div className="flex-grow container mx-auto px-4 pt-16 pb-8">
+    <div className="container mx-auto px-4 pt-16 pb-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-6" style={{ color: '#0D2818' }}>
@@ -378,31 +373,6 @@ export default function Rewards() {
             </div>
           </div>
         </div>
-
-        {/* Call to Action */}
-        <div className="text-center py-12 rounded-2xl" style={{ backgroundColor: '#6603BF' }}>
-          <h2 className="text-3xl font-bold mb-4" style={{ color: '#C6FC7B' }}>
-            Start Earning Rewards Today
-          </h2>
-          <p className="text-lg mb-8" style={{ color: '#C6FC7B' }}>
-            Join competitions, make predictions, and unlock amazing rewards
-          </p>
-          <div className="flex justify-center space-x-4">
-            <Link href="/competitions">
-              <button className="bg-white text-black px-6 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
-                View Competitions
-              </button>
-            </Link>
-            <Link href="/predict">
-              <button className="bg-[#C6FC7B] text-[#122B1B] px-6 py-3 rounded-md font-semibold hover:bg-[#B5E86A] transition-colors">
-                Start Predicting
-              </button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <Footer />
     </div>
   );
 }

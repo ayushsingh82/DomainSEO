@@ -1,15 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#C6FC7B' }}>
-      <Navbar />
-      {/* Hero Section - Green Background */}
-      <div className="flex-grow container mx-auto px-4 pt-16 pb-8" style={{ backgroundColor: '#C6FC7B' }}>
+    <div className="container mx-auto px-4 pt-16 pb-8" style={{ backgroundColor: '#C6FC7B' }}>
         <div className="text-center">
           <h1 className="text-6xl font-bold mb-6 mt-[60px]" style={{ color: '#0D2818' }}>
             samxdom — Prediction Trading Competitions
@@ -192,11 +187,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Silver Line */}
       <div className="h-px mx-4" style={{ backgroundColor: '#C6FC7B' }}></div>
-      <Footer />
     </div>
   );
 }

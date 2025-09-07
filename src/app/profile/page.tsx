@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -130,10 +128,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#C6FC7B' }}>
-      <Navbar />
-      
-      <div className="flex-grow container mx-auto px-4 pt-16 pb-8">
+    <div className="container mx-auto px-4 pt-16 pb-8">
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-2xl p-8 mb-8">
           <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8">
@@ -420,9 +415,6 @@ export default function Profile() {
             </Link>
           </div>
         </div>
-      </div>
-
-      <Footer />
     </div>
   );
 }

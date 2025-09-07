@@ -37,11 +37,11 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Launch App Button */}
+     
             <div className="flex items-center">
-              <Link href="/launch">
+              <Link href="/">
                 <button className="font-medium py-1.5 px-4 rounded-lg transition-colors duration-200 shadow-sm hover:opacity-80 text-sm" style={{ backgroundColor: '#C6FC7B', color: '#171717' }}>
-                  Launch App
+            Connect Wallet
                 </button>
               </Link>
             </div>

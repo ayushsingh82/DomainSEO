@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 export default function Leaderboard() {
   const [timeFilter, setTimeFilter] = useState('all');
@@ -144,10 +142,7 @@ export default function Leaderboard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#C6FC7B' }}>
-      <Navbar />
-      
-      <div className="flex-grow container mx-auto px-4 pt-16 pb-8">
+    <div className="container mx-auto px-4 pt-16 pb-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-6" style={{ color: '#0D2818' }}>
@@ -341,9 +336,6 @@ export default function Leaderboard() {
             </Link>
           </div>
         </div>
-      </div>
-
-      <Footer />
     </div>
   );
 }
