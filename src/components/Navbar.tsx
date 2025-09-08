@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import ConnectWallet from '@/components/ConnectWallet';
 
 const Navbar = () => {
   return (
@@ -39,11 +40,7 @@ const Navbar = () => {
 
      
             <div className="flex items-center">
-              <Link href="/">
-                <button className="font-medium py-1.5 px-4 rounded-lg transition-colors duration-200 shadow-sm hover:opacity-80 text-sm" style={{ backgroundColor: '#C6FC7B', color: '#171717' }}>
-            Connect Wallet
-                </button>
-              </Link>
+              <ConnectWallet />
             </div>
           </div>
         </div>
