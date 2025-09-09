@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DomainBet - Prediction Trading Competitions",
-  description: "Compete in prediction-based trading competitions where traders predict domain price movements. AI-powered valuation oracles verify accuracy with leaderboards and rewards for top predictors.",
+  title: "domaSEO - No-Code Domain NFT Sales Pages",
+  description: "Create SEO-optimized, branded landing pages for your domain NFTs. Pulls live data from Doma orderbook with Buy Now and Make Offer actions.",
 };
 
 export default function RootLayout({

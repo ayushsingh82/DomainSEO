@@ -12,23 +12,17 @@ const Navbar = () => {
             {/* Logo/Brand */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
-                <span className="text-xl font-bold" style={{ color: '#C6FC7B' }}>DomainBet</span>
+                <span className="text-xl font-bold" style={{ color: '#C6FC7B' }}>domaSEO</span>
               </Link>
             </div>
 
             {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="/competitions" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Competitions
-              </Link>
-              <Link href="/oracles" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Oracles
-              </Link>
-              <Link href="/profile" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Profile
+              <Link href="/domains" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Domains
               </Link>
               <Link href="/create" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Create
+                Builder
               </Link>
             </div>
 
