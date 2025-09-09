@@ -21,17 +21,8 @@ const Navbar = () => {
               <Link href="/competitions" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
                 Competitions
               </Link>
-              <Link href="/leaderboard" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Leaderboard
-              </Link>
-              <Link href="/predict" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Predict
-              </Link>
               <Link href="/oracles" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
                 Oracles
-              </Link>
-              <Link href="/rewards" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
-                Rewards
               </Link>
               <Link href="/profile" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
                 Profile

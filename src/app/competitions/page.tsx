@@ -114,16 +114,7 @@ export default function Competitions() {
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {activeCompetitions.map((competition) => (
               <div key={competition.id} className="bg-white rounded-2xl shadow-2xl p-6 transform hover:scale-105 transition-all duration-300 border-2" style={{ borderColor: '#C6FC7B' }}>
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: getDifficultyColor(competition.difficulty), color: '#0D2818' }}>
-                      {competition.difficulty}
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: getStatusColor(competition.status), color: 'white' }}>
-                      {competition.status.toUpperCase()}
-                    </span>
-                  </div>
-                </div>
+                
 
                 <h3 className="text-xl font-bold mb-2" style={{ color: '#0D2818' }}>
                   {competition.title}
@@ -138,8 +129,8 @@ export default function Competitions() {
                     <span className="text-sm font-mono" style={{ color: '#0D2818' }}>{competition.domain}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Current Price:</span>
-                    <span className="text-sm font-bold" style={{ color: '#10B981' }}>{competition.currentPrice}</span>
+                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Price Range:</span>
+                    <span className="text-sm font-bold" style={{ color: '#10B981' }}>$20 - $60</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Time Left:</span>
@@ -149,10 +140,6 @@ export default function Competitions() {
                     <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Participants:</span>
                     <span className="text-sm" style={{ color: '#0D2818' }}>{competition.participants.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Prize Pool:</span>
-                    <span className="text-sm font-bold" style={{ color: '#8B5CF6' }}>{competition.prizePool}</span>
-                  </div>
                 </div>
 
                 <Link href={`/predict/${competition.id}`}>
@@ -160,66 +147,6 @@ export default function Competitions() {
                     Join Competition
                   </button>
                 </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Upcoming Competitions */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold" style={{ color: '#0D2818' }}>
-              Upcoming Competitions
-            </h2>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3B82F6' }}></div>
-              <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Starting Soon</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {upcomingCompetitions.map((competition) => (
-              <div key={competition.id} className="bg-white rounded-2xl shadow-2xl p-6 transform hover:scale-105 transition-all duration-300 border-2 opacity-90" style={{ borderColor: '#C6FC7B' }}>
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: getDifficultyColor(competition.difficulty), color: '#0D2818' }}>
-                      {competition.difficulty}
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: getStatusColor(competition.status), color: 'white' }}>
-                      {competition.status.toUpperCase()}
-                    </span>
-                  </div>
-                </div>
-
-                <h3 className="text-xl font-bold mb-2" style={{ color: '#0D2818' }}>
-                  {competition.title}
-                </h3>
-                <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
-                  {competition.description}
-                </p>
-
-                <div className="space-y-3 mb-6">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Domain:</span>
-                    <span className="text-sm font-mono" style={{ color: '#0D2818' }}>{competition.domain}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Current Price:</span>
-                    <span className="text-sm font-bold" style={{ color: '#10B981' }}>{competition.currentPrice}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Starts:</span>
-                    <span className="text-sm font-bold" style={{ color: '#3B82F6' }}>{competition.startTime}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Prize Pool:</span>
-                    <span className="text-sm font-bold" style={{ color: '#8B5CF8' }}>{competition.prizePool}</span>
-                  </div>
-                </div>
-
-                <button className="w-full py-3 px-4 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105 shadow-lg opacity-75 cursor-not-allowed" style={{ backgroundColor: '#6B7280' }}>
-                  Coming Soon
-                </button>
               </div>
             ))}
           </div>
