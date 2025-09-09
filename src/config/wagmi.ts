@@ -33,7 +33,7 @@ export const config = createConfig({
       projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '2987b6292605d325403d9c0a4c2c3c80',
     }),
     coinbaseWallet({
-      appName: 'samxdom',
+      appName: 'DomainBet',
     }),
   ],
   transports: {

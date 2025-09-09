@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "samxdom - Prediction Trading Competitions",
+  title: "DomainBet - Prediction Trading Competitions",
   description: "Compete in prediction-based trading competitions where traders predict domain price movements. AI-powered valuation oracles verify accuracy with leaderboards and rewards for top predictors.",
 };
 

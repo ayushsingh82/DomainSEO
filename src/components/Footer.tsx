@@ -8,7 +8,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-4">
-              <span className="text-2xl font-bold" style={{ color: '#C6FC7B' }}>samxdom</span>
+              <span className="text-2xl font-bold" style={{ color: '#C6FC7B' }}>DomainBet</span>
             </div>
             <p className="mb-4 max-w-md" style={{ color: '#C6FC7B' }}>
               The most efficient way to find the best trade.
@@ -63,7 +63,7 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t" style={{ borderColor: '#C6FC7B' }}>
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm" style={{ color: '#C6FC7B' }}>
-              © 2024 samxdom. All rights reserved.
+              © 2024 DomainBet. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link href="/privacy" className="text-sm transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>

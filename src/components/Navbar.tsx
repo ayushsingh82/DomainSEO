@@ -12,7 +12,7 @@ const Navbar = () => {
             {/* Logo/Brand */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
-                <span className="text-xl font-bold" style={{ color: '#C6FC7B' }}>samxdom</span>
+                <span className="text-xl font-bold" style={{ color: '#C6FC7B' }}>DomainBet</span>
               </Link>
             </div>
 
@@ -26,6 +26,9 @@ const Navbar = () => {
               </Link>
               <Link href="/profile" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
                 Profile
+              </Link>
+              <Link href="/create" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Create
               </Link>
             </div>
 

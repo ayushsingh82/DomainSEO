@@ -1,8 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useCallback } from 'react';
 
 export default function Competitions() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleJoin = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
   const activeCompetitions = [
     {
       id: 1,
@@ -142,15 +148,42 @@ export default function Competitions() {
                   </div>
                 </div>
 
-                <Link href={`/predict/${competition.id}`}>
-                  <button className="w-full py-3 px-4 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105 shadow-lg" style={{ backgroundColor: '#6603BF' }}>
-                    Join Competition
-                  </button>
-                </Link>
+                <button onClick={handleJoin} className="w-full py-3 px-4 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105 shadow-lg" style={{ backgroundColor: '#6603BF' }}>
+                  Join Competition
+                </button>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Join Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black opacity-40"></div>
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 border-2" style={{ borderColor: '#C6FC7B' }}>
+              <h3 className="text-xl font-bold mb-2" style={{ color: '#0D2818' }}>Join Competition</h3>
+              <p className="text-sm mb-6" style={{ color: '#6B7280' }}>
+                To participate, you will need to deposit 0.1 ETH. This flow is coming soon.
+              </p>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-lg font-medium hover:bg-gray-100"
+                  style={{ color: '#0D2818' }}
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-lg font-bold text-white"
+                  style={{ backgroundColor: '#6603BF' }}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Call to Action */}
         <div className="text-center py-12 rounded-2xl" style={{ backgroundColor: '#6603BF' }}>

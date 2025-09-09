@@ -7,7 +7,7 @@ export default function Home() {
     <div className="container mx-auto px-4 pt-16 pb-8" style={{ backgroundColor: '#C6FC7B' }}>
         <div className="text-center">
           <h1 className="text-6xl font-bold mb-6 mt-[60px]" style={{ color: '#0D2818' }}>
-            samxdom — Prediction Trading Competitions
+            DomainBet — Prediction Trading Competitions
           </h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed" style={{ color: '#0D2818' }}>
             Compete in prediction-based trading competitions where traders predict domain price movements. AI-powered valuation oracles verify accuracy with leaderboards and rewards for top predictors.
@@ -82,7 +82,7 @@ export default function Home() {
         <div className="-mx-[100vw] px-[100vw] py-12" style={{ backgroundColor: '#6603BF' }}>
           <div className="container mx-auto">
             <div className="text-center">
-              <h2 className="text-4xl font-bold mb-12" style={{ color: '#C6FC7B' }}>Why Choose samxdom?</h2>
+              <h2 className="text-4xl font-bold mb-12" style={{ color: '#C6FC7B' }}>Why Choose DomainBet?</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="p-6 rounded-2xl shadow-2xl transform hover:scale-110 hover:rotate-2 transition-all duration-500 bg-gradient-to-br from-gray-200 to-gray-300">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg transform hover:rotate-12 transition-transform duration-300" style={{ backgroundColor: '#08130C' }}>
@@ -120,7 +120,7 @@ export default function Home() {
         <div className="-mx-[100vw] px-[100vw] py-12 " style={{ backgroundColor: '#122B1B' }}>
           <div className="container mx-auto">
             <h2 className="text-4xl font-bold text-center mb-12" style={{ color: '#C6FC7B' }}>
-              How samxdom Works
+              How DomainBet Works
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="p-6 rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-500 border-l-8 bg-[#C6FC7B]" style={{ borderColor: '#08130C' }}>
@@ -159,7 +159,7 @@ export default function Home() {
                 Leaderboard & Rewards
                 </h4>
                 <p className="text-sm leading-relaxed" style={{ color: '#08130C' }}>
-                Climb the leaderboards and win rewards! Top predictors receive tokens, exclusive NFTs, and recognition in the samxdom community.
+                Climb the leaderboards and win rewards! Top predictors receive tokens, exclusive NFTs, and recognition in the DomainBet community.
                 </p>
               </div>
             </div>
@@ -173,7 +173,7 @@ export default function Home() {
               <div className="mb-12 mt-8">
                 <h2 className="text-3xl font-bold mb-4" style={{ color: '#C6FC7B' }}>Ready to Start Predicting?</h2>
                 <p className="text-sm leading-relaxed mb-6" style={{ color: '#C6FC7B' }}>
-                  Join samxdom prediction competitions and test your domain trading skills against the best predictors worldwide.
+                  Join DomainBet prediction competitions and test your domain trading skills against the best predictors worldwide.
                 </p>
                 <div className="flex justify-center gap-4">
                   <button className="bg-white text-black px-6 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
