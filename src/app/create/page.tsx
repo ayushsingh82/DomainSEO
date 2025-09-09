@@ -24,12 +24,12 @@ export default function BuilderPage() {
   return (
     <div className="container mx-auto px-4 pt-16 pb-8">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold" style={{ color: '#0D2818' }}>Landing Page Builder</h1>
-        <p className="text-sm mt-2" style={{ color: '#6B7280' }}>Customize and preview your SEO-ready domain sales page.</p>
+        <h1 className="text-5xl font-extrabold tracking-tight" style={{ color: '#0D2818' }}>Landing Page Builder</h1>
+        <p className="text-base mt-3" style={{ color: '#6B7280' }}>Customize and preview your SEO-ready domain sales page.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <form onSubmit={(e) => e.preventDefault()} className="bg-white rounded-2xl shadow-2xl p-6 space-y-5">
+        <form onSubmit={(e) => e.preventDefault()} className="bg-white rounded-2xl shadow-2xl p-6 space-y-5 border-2" style={{ borderColor: '#0D2818' }}>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#0D2818' }}>Domain</label>
             <input
@@ -38,8 +38,8 @@ export default function BuilderPage() {
               value={form.domain}
               onChange={handleChange}
               placeholder="e.g., crypto.eth"
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none placeholder-gray-400"
-              style={{ borderColor: '#C6FC7B', color: '#0D2818', backgroundColor: '#FFFFFF' }}
+              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2"
+              style={{ borderColor: '#0D2818', color: '#0D2818', backgroundColor: '#FFFFFF' }}
               required
             />
           </div>
@@ -50,8 +50,8 @@ export default function BuilderPage() {
               name="brandName"
               value={form.brandName}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none"
-              style={{ borderColor: '#C6FC7B', color: '#0D2818', backgroundColor: '#FFFFFF' }}
+              className="w-full border rounded-lg px-4 py-3 focus:outline-none"
+              style={{ borderColor: '#0D2818', color: '#0D2818', backgroundColor: '#FFFFFF' }}
             />
           </div>
           <div>
@@ -61,8 +61,8 @@ export default function BuilderPage() {
               name="headline"
               value={form.headline}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none"
-              style={{ borderColor: '#C6FC7B', color: '#0D2818', backgroundColor: '#FFFFFF' }}
+              className="w-full border rounded-lg px-4 py-3 focus:outline-none"
+              style={{ borderColor: '#0D2818', color: '#0D2818', backgroundColor: '#FFFFFF' }}
             />
           </div>
           <div>
@@ -71,19 +71,19 @@ export default function BuilderPage() {
               name="description"
               value={form.description}
               onChange={handleChange}
-              rows={3}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none"
-              style={{ borderColor: '#C6FC7B', color: '#0D2818', backgroundColor: '#FFFFFF' }}
+              rows={4}
+              className="w-full border rounded-lg px-4 py-3 focus:outline-none"
+              style={{ borderColor: '#0D2818', color: '#0D2818', backgroundColor: '#FFFFFF' }}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0D2818' }}>Theme Color</label>
-              <input type="color" name="themeColor" value={form.themeColor} onChange={handleChange} className="w-full h-10 border rounded-lg" style={{ borderColor: '#C6FC7B' }} />
+              <input type="color" name="themeColor" value={form.themeColor} onChange={handleChange} className="w-full h-12 border rounded-lg" style={{ borderColor: '#0D2818' }} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0D2818' }}>Accent Color</label>
-              <input type="color" name="accentColor" value={form.accentColor} onChange={handleChange} className="w-full h-10 border rounded-lg" style={{ borderColor: '#C6FC7B' }} />
+              <input type="color" name="accentColor" value={form.accentColor} onChange={handleChange} className="w-full h-12 border rounded-lg" style={{ borderColor: '#0D2818' }} />
             </div>
           </div>
 
@@ -94,14 +94,14 @@ export default function BuilderPage() {
           </div>
         </form>
 
-        <div className="rounded-2xl shadow-2xl p-6 border-2" style={{ borderColor: '#C6FC7B', backgroundColor: form.accentColor }}>
+        <div className="rounded-2xl shadow-2xl p-6 border-2" style={{ borderColor: '#0D2818', backgroundColor: form.accentColor }}>
           <div className="text-center">
             <div className="text-3xl font-bold mb-3" style={{ color: '#0D2818' }}>{form.brandName}</div>
-            <div className="text-5xl font-extrabold mb-4" style={{ color: '#0D2818' }}>{form.headline}</div>
-            <div className="text-sm mb-6 max-w-xl mx-auto" style={{ color: '#0D2818' }}>{form.description}</div>
+            <div className="text-5xl font-extrabold mb-4 leading-tight" style={{ color: '#0D2818' }}>{form.headline}</div>
+            <div className="text-base mb-8 max-w-xl mx-auto" style={{ color: '#0D2818' }}>{form.description}</div>
             <div className="flex justify-center gap-4">
               <button className="px-6 py-3 rounded-md font-semibold text-white" style={{ backgroundColor: form.themeColor }}>Buy Now</button>
-              <button className="px-6 py-3 rounded-md font-semibold" style={{ color: '#0D2818', backgroundColor: '#FFFFFF' }}>Make Offer</button>
+              <button className="px-6 py-3 rounded-md font-semibold border" style={{ color: '#0D2818', backgroundColor: '#FFFFFF', borderColor: '#0D2818' }}>Make Offer</button>
             </div>
           </div>
         </div>

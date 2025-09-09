@@ -1,211 +1,107 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useCallback } from 'react';
+import { useMemo } from 'react';
 
-export default function Competitions() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleJoin = useCallback(() => {
-    setIsModalOpen(true);
-  }, []);
-  const activeCompetitions = [
-    {
-      id: 1,
-      title: "Crypto Domain Rush",
-      description: "Predict price movements for top crypto domains",
-      domain: "crypto.com",
-      currentPrice: "$12,000,000",
-      timeLeft: "2d 14h 32m",
-      participants: 1247,
-      prizePool: "50,000 SAMX",
-      difficulty: "Expert",
-      status: "active"
-    },
-    {
-      id: 2,
-      title: "Tech Giant Domains",
-      description: "Predict movements for major tech company domains",
-      domain: "apple.eth",
-      currentPrice: "$8,500,000",
-      timeLeft: "1d 8h 15m",
-      participants: 892,
-      prizePool: "30,000 SAMX",
-      difficulty: "Intermediate",
-      status: "active"
-    },
-    {
-      id: 3,
-      title: "NFT Domain Frenzy",
-      description: "Predict NFT-related domain price movements",
-      domain: "nft.eth",
-      currentPrice: "$2,100,000",
-      timeLeft: "5h 42m",
-      participants: 634,
-      prizePool: "15,000 SAMX",
-      difficulty: "Beginner",
-      status: "active"
-    }
-  ];
-
-  const upcomingCompetitions = [
-    {
-      id: 4,
-      title: "DeFi Domain Wars",
-      description: "Predict DeFi protocol domain movements",
-      domain: "uniswap.eth",
-      currentPrice: "$5,200,000",
-      startTime: "Tomorrow 12:00 UTC",
-      participants: 0,
-      prizePool: "40,000 SAMX",
-      difficulty: "Expert",
-      status: "upcoming"
-    },
-    {
-      id: 5,
-      title: "Gaming Domain Battle",
-      description: "Predict gaming industry domain movements",
-      domain: "gaming.eth",
-      currentPrice: "$1,800,000",
-      startTime: "Dec 15, 2024 18:00 UTC",
-      participants: 0,
-      prizePool: "25,000 SAMX",
-      difficulty: "Intermediate",
-      status: "upcoming"
-    }
-  ];
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Beginner': return '#C6FC7B';
-      case 'Intermediate': return '#F59E0B';
-      case 'Expert': return '#EF4444';
-      default: return '#C6FC7B';
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return '#10B981';
-      case 'upcoming': return '#3B82F6';
-      case 'ended': return '#6B7280';
-      default: return '#C6FC7B';
-    }
-  };
+export default function ExampleBuild() {
+  const offers = useMemo(
+    () => [
+      { id: 'o1', priceEth: 1.1, bidder: '0x9a...c3', time: '2h ago' },
+      { id: 'o2', priceEth: 1.05, bidder: '0xb2...7e', time: '5h ago' },
+      { id: 'o3', priceEth: 0.98, bidder: '0x41...aa', time: '1d ago' },
+    ],
+    []
+  );
 
   return (
     <div className="container mx-auto px-4 pt-16 pb-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-6" style={{ color: '#0D2818' }}>
-            Prediction Competitions
-          </h1>
-          <p className="text-xl max-w-3xl mx-auto leading-relaxed" style={{ color: '#0D2818' }}>
-            Join active competitions or prepare for upcoming ones. Test your domain prediction skills and compete for amazing rewards.
-          </p>
+      {/* HERO */}
+      <div className="rounded-2xl p-8 mb-8 border-2" style={{ backgroundColor: '#6603BF', borderColor: '#C6FC7B' }}>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <h1 className="text-4xl font-bold mb-2" style={{ color: '#C6FC7B' }}>Example Build</h1>
+            <p className="text-sm max-w-2xl" style={{ color: '#C6FC7B' }}>
+              SEO-ready sales page for a domain NFT. Auto-pulls data from the Doma orderbook and includes Buy Now and Make Offer actions.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Link href="/create" className="bg-white text-black px-5 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">Duplicate This</Link>
+            <Link href="/domains" className="px-5 py-3 rounded-md font-semibold" style={{ color: '#0D2818', backgroundColor: '#C6FC7B' }}>Browse Domains</Link>
+          </div>
         </div>
+      </div>
 
-        {/* Active Competitions */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold" style={{ color: '#0D2818' }}>
-              Active Competitions
-            </h2>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#10B981' }}></div>
-              <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Live Now</span>
+      {/* DOMAIN CARD */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white rounded-2xl shadow-2xl p-6 border-2" style={{ borderColor: '#C6FC7B' }}>
+          <div className="flex items-center gap-4 mb-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/globe.svg" alt="domain" className="w-12 h-12 rounded" />
+            <div>
+              <div className="text-3xl font-bold" style={{ color: '#0D2818' }}>crypto.eth</div>
+              <div className="text-sm" style={{ color: '#6B7280' }}>Premium ENS Domain</div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {activeCompetitions.map((competition) => (
-              <div key={competition.id} className="bg-white rounded-2xl shadow-2xl p-6 transform hover:scale-105 transition-all duration-300 border-2" style={{ borderColor: '#C6FC7B' }}>
-                
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Metric label="Floor" value="1.2 ETH" />
+            <Metric label="Last Sale" value="1.0 ETH" />
+            <Metric label="Offers" value={`${offers.length}`} />
+            <Metric label="Buy Now" value="1.3 ETH" />
+          </div>
 
-                <h3 className="text-xl font-bold mb-2" style={{ color: '#0D2818' }}>
-                  {competition.title}
-                </h3>
-                <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
-                  {competition.description}
-                </p>
+          <div className="flex gap-3">
+            <button className="py-3 px-4 rounded-xl font-bold text-white shadow" style={{ backgroundColor: '#6603BF' }} onClick={() => alert('Buy Now flow (demo)')}>
+              Buy Now
+            </button>
+            <button className="py-3 px-4 rounded-xl font-bold border" style={{ color: '#0D2818', borderColor: '#C6FC7B' }} onClick={() => alert('Make Offer flow (demo)')}>
+              Make Offer
+            </button>
+          </div>
+        </div>
 
-                <div className="space-y-3 mb-6">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Domain:</span>
-                    <span className="text-sm font-mono" style={{ color: '#0D2818' }}>{competition.domain}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Price Range:</span>
-                    <span className="text-sm font-bold" style={{ color: '#10B981' }}>$20 - $60</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Time Left:</span>
-                    <span className="text-sm font-bold" style={{ color: '#EF4444' }}>{competition.timeLeft}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium" style={{ color: '#0D2818' }}>Participants:</span>
-                    <span className="text-sm" style={{ color: '#0D2818' }}>{competition.participants.toLocaleString()}</span>
-                  </div>
-                </div>
-
-                <button onClick={handleJoin} className="w-full py-3 px-4 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105 shadow-lg" style={{ backgroundColor: '#6603BF' }}>
-                  Join Competition
-                </button>
+        {/* OFFERS TABLE */}
+        <div className="bg-white rounded-2xl shadow-2xl p-6 border-2" style={{ borderColor: '#C6FC7B' }}>
+          <h3 className="text-lg font-bold mb-4" style={{ color: '#0D2818' }}>Orderbook Offers</h3>
+          <div className="space-y-3">
+            {offers.map((o) => (
+              <div key={o.id} className="flex items-center justify-between p-3 rounded-lg border" style={{ borderColor: '#C6FC7B' }}>
+                <span className="font-semibold" style={{ color: '#0D2818' }}>{o.priceEth} ETH</span>
+                <span className="text-sm" style={{ color: '#6B7280' }}>{o.bidder}</span>
+                <span className="text-sm" style={{ color: '#6B7280' }}>{o.time}</span>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Join Modal */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="absolute inset-0 bg-black opacity-40"></div>
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 border-2" style={{ borderColor: '#C6FC7B' }}>
-              <h3 className="text-xl font-bold mb-2" style={{ color: '#0D2818' }}>Join Competition</h3>
-              <p className="text-sm mb-6" style={{ color: '#6B7280' }}>
-                To participate, you will need to deposit 0.1 ETH. This flow is coming soon.
-              </p>
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg font-medium hover:bg-gray-100"
-                  style={{ color: '#0D2818' }}
-                >
-                  Close
-                </button>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg font-bold text-white"
-                  style={{ backgroundColor: '#6603BF' }}
-                >
-                  OK
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Call to Action */}
-        <div className="text-center py-12 rounded-2xl" style={{ backgroundColor: '#6603BF' }}>
-          <h2 className="text-3xl font-bold mb-4" style={{ color: '#C6FC7B' }}>
-            Ready to Start Predicting?
-          </h2>
-          <p className="text-lg mb-8" style={{ color: '#C6FC7B' }}>
-            Join thousands of traders competing in domain prediction competitions
-          </p>
-          <div className="flex justify-center space-x-4">
-            <Link href="/leaderboard">
-              <button className="bg-white text-black px-6 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
-                View Leaderboard
-              </button>
-            </Link>
-            <Link href="/predict">
-              <button className="bg-[#C6FC7B] text-[#122B1B] px-6 py-3 rounded-md font-semibold hover:bg-[#B5E86A] transition-colors">
-                Start Predicting
-              </button>
-            </Link>
-          </div>
+      {/* ANALYTICS */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="rounded-2xl p-6 border-2" style={{ backgroundColor: '#122B1B', borderColor: '#C6FC7B' }}>
+          <h4 className="text-sm font-semibold mb-2" style={{ color: '#C6FC7B' }}>SEO Score</h4>
+          <div className="text-3xl font-bold" style={{ color: '#C6FC7B' }}>92/100</div>
+          <p className="text-xs mt-2" style={{ color: '#C6FC7B' }}>Optimized metadata, fast render, accessible content</p>
         </div>
+        <div className="rounded-2xl p-6 border-2" style={{ backgroundColor: '#122B1B', borderColor: '#C6FC7B' }}>
+          <h4 className="text-sm font-semibold mb-2" style={{ color: '#C6FC7B' }}>Views (7d)</h4>
+          <div className="text-3xl font-bold" style={{ color: '#C6FC7B' }}>1,247</div>
+          <p className="text-xs mt-2" style={{ color: '#C6FC7B' }}>Demo analytics for preview</p>
+        </div>
+        <div className="rounded-2xl p-6 border-2" style={{ backgroundColor: '#122B1B', borderColor: '#C6FC7B' }}>
+          <h4 className="text-sm font-semibold mb-2" style={{ color: '#C6FC7B' }}>CTR</h4>
+          <div className="text-3xl font-bold" style={{ color: '#C6FC7B' }}>5.3%</div>
+          <p className="text-xs mt-2" style={{ color: '#C6FC7B' }}>From search impressions to clicks</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="p-4 rounded-xl border" style={{ borderColor: '#C6FC7B' }}>
+      <div className="text-xs" style={{ color: '#6B7280' }}>{label}</div>
+      <div className="text-lg font-bold" style={{ color: '#0D2818' }}>{value}</div>
     </div>
   );
 }
