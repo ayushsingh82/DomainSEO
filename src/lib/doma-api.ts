@@ -170,7 +170,7 @@ class DomaAPI {
     try {
       console.log(`Fetching domains: limit=${limit}, offset=${offset}, search=${search}`);
       
-      // Try to get comprehensive domain data
+      // Try to get comprehensive domain data (API doesn't support pagination)
       const comprehensiveQuery = `
         query {
           names {
@@ -186,29 +186,30 @@ class DomaAPI {
       
       try {
         const data = await this.graphqlRequest(comprehensiveQuery);
-        console.log(`API returned ${data.names?.items?.length || 0} domains`);
+        console.log(`API returned ${data.names?.items?.length || 0} domains, claims totalCount: ${data.names?.totalCount || 0}`);
         
         if (!data.names || !data.names.items) {
           console.log('No domain items found in response');
           return { domains: [], totalCount: 0, hasNext: false };
         }
 
-        // Apply search filter first if provided
-        let filteredItems = data.names.items;
+        // The API returns limited items but claims a large totalCount
+        // We can only work with the items actually returned
+        let availableItems = data.names.items;
+        
+        // Apply search filter if provided
         if (search) {
           const searchLower = search.toLowerCase();
-          filteredItems = data.names.items.filter((item: { name: string }) => 
+          availableItems = data.names.items.filter((item: { name: string }) => 
             item.name.toLowerCase().includes(searchLower)
           );
         }
 
-        // Calculate total count (either filtered or full dataset)
-        const totalCount = search ? filteredItems.length : (data.names.totalCount || data.names.items.length);
+        // For pagination, we can only paginate through the items we actually have
+        const actualItemsCount = availableItems.length;
+        const paginatedItems = availableItems.slice(offset, offset + limit);
         
-        // Apply pagination to the filtered results
-        const paginatedItems = filteredItems.slice(offset, offset + limit);
-        
-        console.log(`Applying pagination: offset=${offset}, limit=${limit}, total=${totalCount}, showing=${paginatedItems.length}`);
+        console.log(`Available items: ${actualItemsCount}, pagination: offset=${offset}, limit=${limit}, showing=${paginatedItems.length}`);
 
         // For each domain in the current page, try to get detailed information
         const domainPromises = paginatedItems.map(async (nameItem: { name: string }) => {
@@ -254,13 +255,17 @@ class DomaAPI {
 
         const domains = await Promise.all(domainPromises);
 
-        const hasNext = (offset + limit) < totalCount;
+        // Calculate hasNext based on actual available items, not the claimed totalCount
+        const hasNext = (offset + limit) < actualItemsCount;
+        
+        // Use actual items count for realistic pagination
+        const effectiveTotalCount = search ? actualItemsCount : actualItemsCount;
 
-        console.log(`Returning ${domains.length} domains for page, total available: ${totalCount}`);
+        console.log(`Returning ${domains.length} domains for page, actual total available: ${effectiveTotalCount}`);
 
         return {
           domains: domains,
-          totalCount: totalCount, // Use the filtered total count
+          totalCount: effectiveTotalCount, // Use realistic count based on actual items
           hasNext: hasNext,
           fullApiResponse: data // Include the full original response
         };
