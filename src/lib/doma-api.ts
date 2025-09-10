@@ -202,7 +202,8 @@ class DomaAPI {
           );
         }
 
-        const totalCount = filteredItems.length;
+        // Calculate total count (either filtered or full dataset)
+        const totalCount = search ? filteredItems.length : (data.names.totalCount || data.names.items.length);
         
         // Apply pagination to the filtered results
         const paginatedItems = filteredItems.slice(offset, offset + limit);
