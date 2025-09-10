@@ -13,7 +13,6 @@ interface OrderbookItem {
   owner?: string;
   listings?: number;
   offers?: number;
-  fullApiData?: Record<string, unknown>; // Store the full API response data
 }
 
 export default function DomainsPage() {
@@ -21,8 +20,9 @@ export default function DomainsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [showFullData, setShowFullData] = useState(false);
-  const [apiResponse, setApiResponse] = useState<Record<string, unknown> | null>(null);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(24); // Show 24 domains per page for better grid layout
 
   useEffect(() => {
     async function fetchDomains() {
@@ -30,12 +30,11 @@ export default function DomainsPage() {
         setLoading(true);
         setError(null);
 
-        const result = await domaAPI.getDomains(50, 0, query);
+        // Calculate offset based on current page
+        const offset = (currentPage - 1) * itemsPerPage;
         
-        console.log('Full API Result:', result);
-        
-        // Store the full API response for debugging
-        setApiResponse(result as Record<string, unknown>);
+        // Fetch domains with pagination
+        const result = await domaAPI.getDomains(itemsPerPage, offset, query);
         
         const domainItems: OrderbookItem[] = result.domains.map((domain: {
           name: string;
@@ -44,7 +43,6 @@ export default function DomainsPage() {
           description?: string;
           registrar?: string;
           owner?: string;
-          fullApiData?: Record<string, unknown>;
         }) => ({
           name: domain.name,
           tld: domain.tld,
@@ -52,27 +50,38 @@ export default function DomainsPage() {
           description: domain.description,
           registrar: domain.registrar,
           owner: domain.owner,
-          fullApiData: domain.fullApiData,
         }));
         
         setDomains(domainItems);
+        setTotalCount(result.totalCount || domainItems.length);
       } catch (err) {
         console.error('Error fetching domains:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch domains');
         setDomains([]);
+        setTotalCount(0);
       } finally {
         setLoading(false);
       }
     }
 
     fetchDomains();
-  }, [query]);
+  }, [query, currentPage, itemsPerPage]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return domains;
-    return domains.filter((item) => item.name.toLowerCase().includes(q));
-  }, [domains, query]);
+    // When searching, we get filtered results from the API
+    // When not searching, we show the current page of results
+    return domains;
+  }, [domains]);
+
+  // Reset to page 1 when search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query]);
+
+  // Calculate pagination info
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalCount);
 
   if (loading) {
     return (
@@ -81,6 +90,9 @@ export default function DomainsPage() {
           <h1 className="text-5xl font-extrabold tracking-tight" style={{ color: '#0D2818' }}>Explore Domains</h1>
           <p className="text-base mt-3" style={{ color: '#6B7280' }}>
             Live data sourced from the Doma orderbook. Use Buy Now or Make Offer.
+          </p>
+          <p className="text-sm mt-2 font-medium" style={{ color: '#6603BF' }}>
+            Loading all available domains...
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -115,6 +127,11 @@ export default function DomainsPage() {
         <p className="text-base mt-3" style={{ color: '#6B7280' }}>
           Live data sourced from the Doma orderbook. Use Buy Now or Make Offer.
         </p>
+        {totalCount > 0 && (
+          <p className="text-sm mt-2 font-medium" style={{ color: '#6603BF' }}>
+            {totalCount.toLocaleString()} domains available • Showing {startItem.toLocaleString()}-{endItem.toLocaleString()} • Page {currentPage} of {totalPages.toLocaleString()}
+          </p>
+        )}
       </div>
 
       <div className="max-w-md mx-auto mb-8">
@@ -135,34 +152,6 @@ export default function DomainsPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
-        
-        {/* Toggle for showing full API data */}
-        <div className="mt-4 flex items-center justify-center">
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={showFullData}
-              onChange={(e) => setShowFullData(e.target.checked)}
-              className="rounded border-gray-300 text-[#6603BF] focus:ring-[#6603BF]"
-            />
-            <span className="text-sm text-gray-600">Show Full API Data</span>
-          </label>
-        </div>
-        
-        {/* Display API Response Summary */}
-        {apiResponse && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-900 mb-2">API Response Summary</h3>
-            <div className="text-xs text-gray-600 space-y-1">
-              <div>Total Domains: {Array.isArray(apiResponse.domains) ? (apiResponse.domains as unknown[]).length : 'N/A'}</div>
-              <div>Total Count: {(apiResponse.totalCount as number) || 'N/A'}</div>
-              <div>Has Next: {(apiResponse.hasNext as boolean) ? 'Yes' : 'No'}</div>
-              {apiResponse.error && typeof apiResponse.error === 'string' ? (
-                <div className="text-red-600">Error: {apiResponse.error}</div>
-              ) : null}
-            </div>
-          </div>
-        )}
       </div>
 
       {filtered.length === 0 ? (
@@ -219,33 +208,14 @@ export default function DomainsPage() {
                   </div>
                 </div>
 
-                {/* Show full API data if toggle is enabled */}
-                {showFullData && item.fullApiData && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <details className="text-xs">
-                      <summary className="cursor-pointer text-[#6603BF] font-medium">
-                        Full API Data
-                      </summary>
-                      <pre className="mt-2 p-2 bg-gray-50 rounded text-xs overflow-x-auto max-h-40 overflow-y-auto">
-                        {JSON.stringify(item.fullApiData, null, 2)}
-                      </pre>
-                    </details>
-                  </div>
-                )}
-
                 <div className="mt-4">
                   <div className="flex gap-2">
                     <span className="px-3 py-1 bg-[#C6FC7B] text-[#0D2818] text-xs font-medium rounded-full">
-                      View Details
+                      View Sales Page
                     </span>
                     <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
-                      Create Sales Page
+                      Available
                     </span>
-                    {showFullData && (
-                      <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
-                        API Data
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>
@@ -254,29 +224,67 @@ export default function DomainsPage() {
         </div>
       )}
 
-      {/* Show full API response when toggle is enabled */}
-      {showFullData && apiResponse && (
-        <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Complete API Response</h2>
-          <details>
-            <summary className="cursor-pointer text-[#6603BF] font-medium mb-2">
-              Click to view full API response data
-            </summary>
-            <pre className="text-xs bg-white p-4 rounded border overflow-x-auto max-h-96 overflow-y-auto">
-              {JSON.stringify(apiResponse, null, 2)}
-            </pre>
-          </details>
-          
-          {apiResponse.schemaInfo && typeof apiResponse.schemaInfo === 'object' ? (
-            <details className="mt-4">
-              <summary className="cursor-pointer text-[#6603BF] font-medium mb-2">
-                GraphQL Schema Information
-              </summary>
-              <pre className="text-xs bg-white p-4 rounded border overflow-x-auto max-h-96 overflow-y-auto">
-                {JSON.stringify(apiResponse.schemaInfo, null, 2)}
-              </pre>
-            </details>
-          ) : null}
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center space-x-2 mt-12 mb-8">
+          {/* Previous Button */}
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+
+          {/* Page Numbers */}
+          {(() => {
+            const maxVisible = 7;
+            const start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            const end = Math.min(totalPages, start + maxVisible - 1);
+            const pages = [];
+
+            // Add first page if not visible
+            if (start > 1) {
+              pages.push(1);
+              if (start > 2) pages.push('...');
+            }
+
+            // Add visible pages
+            for (let i = start; i <= end; i++) {
+              pages.push(i);
+            }
+
+            // Add last page if not visible
+            if (end < totalPages) {
+              if (end < totalPages - 1) pages.push('...');
+              pages.push(totalPages);
+            }
+
+            return pages.map((page, index) => (
+              <button
+                key={index}
+                onClick={() => typeof page === 'number' && setCurrentPage(page)}
+                disabled={page === '...'}
+                className={`px-4 py-2 text-sm font-medium rounded-lg ${
+                  page === currentPage
+                    ? 'text-white'
+                    : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
+                } ${page === '...' ? 'cursor-not-allowed' : ''}`}
+                style={page === currentPage ? { backgroundColor: '#6603BF' } : {}}
+              >
+                {page}
+              </button>
+            ));
+          })()}
+
+          {/* Next Button */}
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       )}
 

@@ -144,14 +144,14 @@ class DomaAPI {
         return null;
       }
 
-      // Return basic domain data since complex fields don't match schema
+      // Return basic domain data with real information from API
       const domainData: DomainData = {
         name: data.name.name,
         tld: data.name.name.split('.').pop() || 'unknown',
-        description: `Premium domain ${data.name.name} available for purchase`,
+        description: `Premium domain ${data.name.name} available for purchase. Connect your wallet to make an offer or purchase directly.`,
         image: '/globe.svg',
-        listings: [],
-        offers: [],
+        listings: [], // Will be populated when we can query listings
+        offers: [], // Will be populated when we can query offers
         registrar: {
           name: 'Doma Registry',
           url: 'https://doma.xyz',
@@ -186,15 +186,31 @@ class DomaAPI {
       
       try {
         const data = await this.graphqlRequest(comprehensiveQuery);
-        console.log('Full API Response:', JSON.stringify(data, null, 2));
+        console.log(`API returned ${data.names?.items?.length || 0} domains`);
         
         if (!data.names || !data.names.items) {
           console.log('No domain items found in response');
           return { domains: [], totalCount: 0, hasNext: false };
         }
 
-        // For each domain, try to get detailed information
-        const domainPromises = data.names.items.map(async (nameItem: { name: string }) => {
+        // Apply search filter first if provided
+        let filteredItems = data.names.items;
+        if (search) {
+          const searchLower = search.toLowerCase();
+          filteredItems = data.names.items.filter((item: { name: string }) => 
+            item.name.toLowerCase().includes(searchLower)
+          );
+        }
+
+        const totalCount = filteredItems.length;
+        
+        // Apply pagination to the filtered results
+        const paginatedItems = filteredItems.slice(offset, offset + limit);
+        
+        console.log(`Applying pagination: offset=${offset}, limit=${limit}, total=${totalCount}, showing=${paginatedItems.length}`);
+
+        // For each domain in the current page, try to get detailed information
+        const domainPromises = paginatedItems.map(async (nameItem: { name: string }) => {
           try {
             // Try to get more details for each domain
             const detailQuery = `
@@ -224,7 +240,7 @@ class DomaAPI {
             return {
               name: nameItem.name,
               tld: nameItem.name.split('.').pop() || 'unknown',
-              description: `Domain ${nameItem.name} - Basic data only`,
+              description: `Premium domain ${nameItem.name} available for purchase`,
               image: '/globe.svg',
               registrar: 'Doma Registry',
               fullApiData: {
@@ -237,21 +253,14 @@ class DomaAPI {
 
         const domains = await Promise.all(domainPromises);
 
-        // Apply search filter on client side if needed
-        let filteredDomains = domains;
-        if (search) {
-          const searchLower = search.toLowerCase();
-          filteredDomains = domains.filter((domain) => 
-            domain.name.toLowerCase().includes(searchLower)
-          );
-        }
+        const hasNext = (offset + limit) < totalCount;
 
-        console.log(`Returning ${filteredDomains.length} domains with full data`);
+        console.log(`Returning ${domains.length} domains for page, total available: ${totalCount}`);
 
         return {
-          domains: filteredDomains,
-          totalCount: data.names.totalCount || data.names.items.length,
-          hasNext: false,
+          domains: domains,
+          totalCount: totalCount, // Use the filtered total count
+          hasNext: hasNext,
           fullApiResponse: data // Include the full original response
         };
       } catch (basicError) {

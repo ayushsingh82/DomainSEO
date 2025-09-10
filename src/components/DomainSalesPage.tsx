@@ -109,25 +109,59 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
     );
   }
 
-  if (error || !domainData) {
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: config.accentColor }}>
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h1 className="text-2xl font-bold mb-4" style={{ color: config.themeColor }}>Error Loading Domain</h1>
+          <p className="text-lg mb-6" style={{ color: '#0D2818' }}>
+            {error}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 rounded-lg text-white font-medium"
+            style={{ backgroundColor: config.themeColor }}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!domainData) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: config.accentColor }}>
         <div className="text-center max-w-md mx-auto p-8">
           <div className="text-6xl mb-4">🔍</div>
           <h1 className="text-2xl font-bold mb-4" style={{ color: config.themeColor }}>Domain Not Found</h1>
           <p className="text-lg mb-6" style={{ color: '#0D2818' }}>
-            {error || `The domain "${domainName}" could not be found or is not available for sale.`}
+            The domain &quot;{domainName}&quot; could not be found in the Doma registry.
           </p>
-          <Link href="/domains" className="inline-block px-6 py-3 rounded-lg font-semibold text-white" style={{ backgroundColor: config.themeColor }}>
-            Browse Available Domains
-          </Link>
+          <div className="space-y-3">
+            <button
+              onClick={() => window.history.back()}
+              className="block w-full px-6 py-3 rounded-lg text-white font-medium"
+              style={{ backgroundColor: config.themeColor }}
+            >
+              Go Back
+            </button>
+            <a
+              href="/domains"
+              className="block w-full px-6 py-3 rounded-lg border-2 font-medium text-center"
+              style={{ borderColor: config.themeColor, color: config.themeColor }}
+            >
+              Browse Domains
+            </a>
+          </div>
         </div>
       </div>
     );
   }
 
   const bestListing = domainData.listings.length > 0 ? domainData.listings[0] : null;
-  const bestOffer = domainData.offers.length > 0 ? domainData.offers.sort((a, b) => parseFloat(b.price) - parseFloat(a.price))[0] : null;
+  const bestOffer = domainData.offers.length > 0 ? domainData.offers.sort((a: { price: string }, b: { price: string }) => parseFloat(b.price) - parseFloat(a.price))[0] : null;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: config.accentColor }}>
