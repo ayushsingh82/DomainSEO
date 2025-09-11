@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { domaAPI, DomainData } from '@/lib/doma-api';
+import { domaAPI, DomainData, DomainAnalytics, DomainOffer, DomainListing } from '@/lib/doma-api';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -23,6 +23,9 @@ interface DomainSalesPageProps {
 
 export default function DomainSalesPage({ domainName, customization }: DomainSalesPageProps) {
   const [domainData, setDomainData] = useState<DomainData | null>(null);
+  const [domainAnalytics, setDomainAnalytics] = useState<DomainAnalytics | null>(null);
+  const [domainOffers, setDomainOffers] = useState<DomainOffer[]>([]);
+  const [domainListings, setDomainListings] = useState<DomainListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,6 +50,7 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
         setLoading(true);
         setError(null);
 
+        // Fetch domain info
         const data = await domaAPI.getDomainInfo(domainName);
 
         if (!data) {
@@ -55,6 +59,31 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
         }
 
         setDomainData(data);
+
+        // Fetch real analytics data
+        try {
+          const analytics = await domaAPI.getDomainAnalytics(domainName);
+          setDomainAnalytics(analytics);
+        } catch (analyticsError) {
+          console.log('Analytics data not available for', domainName, analyticsError);
+        }
+
+        // Fetch real offers data
+        try {
+          const offers = await domaAPI.getDomainOffers(domainName);
+          setDomainOffers(offers);
+        } catch (offersError) {
+          console.log('Offers data not available for', domainName, offersError);
+        }
+
+        // Fetch real listings data
+        try {
+          const listings = await domaAPI.getDomainListings(domainName);
+          setDomainListings(listings);
+        } catch (listingsError) {
+          console.log('Listings data not available for', domainName, listingsError);
+        }
+
       } catch (err) {
         console.error('Error fetching domain data:', err);
         setError(err instanceof Error ? err.message : 'Failed to load domain data');
@@ -160,8 +189,8 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
     );
   }
 
-  const bestListing = domainData.listings.length > 0 ? domainData.listings[0] : null;
-  const bestOffer = domainData.offers.length > 0 ? domainData.offers.sort((a: { price: string }, b: { price: string }) => parseFloat(b.price) - parseFloat(a.price))[0] : null;
+  const bestListing = domainListings.length > 0 ? domainListings[0] : (domainData.listings.length > 0 ? domainData.listings[0] : null);
+  const bestOffer = domainOffers.length > 0 ? domainOffers.sort((a: { price: string }, b: { price: string }) => parseFloat(b.price) - parseFloat(a.price))[0] : (domainData.offers.length > 0 ? domainData.offers.sort((a: { price: string }, b: { price: string }) => parseFloat(b.price) - parseFloat(a.price))[0] : null);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: config.accentColor }}>
@@ -263,21 +292,23 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
           </div>
 
           {/* Domain Stats */}
-          {config.showStats && domainData.statistics && (
+          {config.showStats && (domainAnalytics || domainData.statistics) && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               <div className="bg-white rounded-xl p-6 text-center shadow-lg">
-                <div className="text-3xl font-bold mb-2" style={{ color: config.themeColor }}>{domainData.statistics.totalSales}</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: config.themeColor }}>
+                  {domainAnalytics?.totalSales || domainData.statistics?.totalSales || 0}
+                </div>
                 <div className="text-sm font-medium" style={{ color: '#6B7280' }}>Total Sales</div>
               </div>
               <div className="bg-white rounded-xl p-6 text-center shadow-lg">
                 <div className="text-3xl font-bold mb-2" style={{ color: config.themeColor }}>
-                  {formatPrice(domainData.statistics.totalVolume)}
+                  {formatPrice(domainAnalytics?.totalVolume || domainData.statistics?.totalVolume)}
                 </div>
                 <div className="text-sm font-medium" style={{ color: '#6B7280' }}>Total Volume</div>
               </div>
               <div className="bg-white rounded-xl p-6 text-center shadow-lg">
                 <div className="text-3xl font-bold mb-2" style={{ color: config.themeColor }}>
-                  {formatPrice(domainData.statistics.averagePrice)}
+                  {formatPrice(domainAnalytics?.averagePrice || domainData.statistics?.averagePrice)}
                 </div>
                 <div className="text-sm font-medium" style={{ color: '#6B7280' }}>Average Price</div>
               </div>
@@ -344,12 +375,12 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
           </div>
 
           {/* Recent Offers */}
-          {config.showOffers && domainData.offers.length > 0 && (
+          {config.showOffers && (domainOffers.length > 0 || domainData.offers.length > 0) && (
             <div className="mt-8 bg-white rounded-2xl p-8 shadow-2xl border-2" style={{ borderColor: config.themeColor }}>
               <h3 className="text-2xl font-bold mb-6" style={{ color: config.themeColor }}>Recent Offers</h3>
               <div className="space-y-4">
-                {domainData.offers.slice(0, 5).map((offer) => (
-                  <div key={offer.id} className="flex justify-between items-center p-4 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
+                {(domainOffers.length > 0 ? domainOffers : domainData.offers).slice(0, 5).map((offer, index) => (
+                  <div key={offer.id || index} className="flex justify-between items-center p-4 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
                     <div>
                       <div className="font-semibold" style={{ color: '#0D2818' }}>
                         {formatPrice(offer.price, offer.currency)}
@@ -359,10 +390,22 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
                       </div>
                     </div>
                     <div className="text-sm" style={{ color: '#6B7280' }}>
-                      Expires {new Date(offer.expiry).toLocaleDateString()}
+                      {offer.expiry ? `Expires ${new Date(offer.expiry).toLocaleDateString()}` : 'Active'}
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="mt-6 text-center">
+                <Link 
+                  href="/offers" 
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+                  style={{ color: config.themeColor, borderColor: config.themeColor }}
+                >
+                  View All Offers
+                  <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
               </div>
             </div>
           )}

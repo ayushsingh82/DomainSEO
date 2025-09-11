@@ -21,6 +21,15 @@ const Navbar = () => {
               <Link href="/domains" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
                 Domains
               </Link>
+              <Link href="/offers" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Offers
+              </Link>
+              <Link href="/analytics" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Analytics
+              </Link>
+              <Link href="/orderbook" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
+                Orderbook
+              </Link>
               <Link href="/create" className="transition-colors hover:opacity-80" style={{ color: '#C6FC7B' }}>
                 Builder
               </Link>

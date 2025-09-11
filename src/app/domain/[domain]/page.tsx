@@ -4,10 +4,10 @@ import DomainSalesPage from '@/components/DomainSalesPage';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     domain: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     brand?: string;
     theme?: string;
     accent?: string;
@@ -18,20 +18,22 @@ interface PageProps {
     stats?: string;
     offers?: string;
     cta?: string;
-  };
+  }>;
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
-  const domainName = decodeURIComponent(params.domain);
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const domainName = decodeURIComponent(resolvedParams.domain);
   
   try {
     // Try to get domain data for metadata
     const domainData = await domaAPI.getDomainInfo(domainName);
 
-    const brandName = searchParams.brand || 'Doma Sales';
-    const headline = searchParams.headline || `Own ${domainName}`;
-    const description = searchParams.description || domainData?.description || `Premium domain ${domainName} available for purchase. SEO-optimized sales page with real-time pricing from Doma orderbook.`;
+    const brandName = resolvedSearchParams.brand || 'Doma Sales';
+    const headline = resolvedSearchParams.headline || `Own ${domainName}`;
+    const description = resolvedSearchParams.description || domainData?.description || `Premium domain ${domainName} available for purchase. SEO-optimized sales page with real-time pricing from Doma orderbook.`;
 
     const bestListing = domainData?.listings?.[0];
     const price = bestListing ? `${bestListing.price} ${bestListing.currency}` : 'Make Offer';
@@ -102,7 +104,9 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
 }
 
 export default async function DomainPage({ params, searchParams }: PageProps) {
-  const domainName = decodeURIComponent(params.domain);
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const domainName = decodeURIComponent(resolvedParams.domain);
 
   // Validate domain name format
   if (!domainName || !domainName.includes('.')) {
@@ -111,16 +115,16 @@ export default async function DomainPage({ params, searchParams }: PageProps) {
 
   // Parse customization from search params
   const customization = {
-    brandName: searchParams.brand,
-    headline: searchParams.headline,
-    description: searchParams.description,
-    themeColor: searchParams.theme,
-    accentColor: searchParams.accent,
-    logoUrl: searchParams.logo,
-    backgroundImage: searchParams.bg,
-    showStats: searchParams.stats !== 'false',
-    showOffers: searchParams.offers !== 'false',
-    customCTA: searchParams.cta,
+    brandName: resolvedSearchParams.brand,
+    headline: resolvedSearchParams.headline,
+    description: resolvedSearchParams.description,
+    themeColor: resolvedSearchParams.theme,
+    accentColor: resolvedSearchParams.accent,
+    logoUrl: resolvedSearchParams.logo,
+    backgroundImage: resolvedSearchParams.bg,
+    showStats: resolvedSearchParams.stats !== 'false',
+    showOffers: resolvedSearchParams.offers !== 'false',
+    customCTA: resolvedSearchParams.cta,
   };
 
   // Remove undefined values
