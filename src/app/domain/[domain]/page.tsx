@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { domaAPI } from '@/lib/doma-api';
+import domaAPI from '@/lib/doma-api';
 import DomainSalesPage from '@/components/DomainSalesPage';
 import { notFound } from 'next/navigation';
 
@@ -28,15 +28,15 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   const domainName = decodeURIComponent(resolvedParams.domain);
   
   try {
-    // Try to get domain data for metadata
-    const domainData = await domaAPI.getDomainInfo(domainName);
+    // Try to get domain data for metadata - used for validation
+    await domaAPI.getDomainInfo(domainName);
 
     const brandName = resolvedSearchParams.brand || 'Doma Sales';
     const headline = resolvedSearchParams.headline || `Own ${domainName}`;
-    const description = resolvedSearchParams.description || domainData?.description || `Premium domain ${domainName} available for purchase. SEO-optimized sales page with real-time pricing from Doma orderbook.`;
+    const description = resolvedSearchParams.description || `Premium domain ${domainName} available for purchase. SEO-optimized sales page with real-time pricing from Doma orderbook.`;
 
-    const bestListing = domainData?.listings?.[0];
-    const price = bestListing ? `${bestListing.price} ${bestListing.currency}` : 'Make Offer';
+    // Since we're using NameData now, we can't access listings directly
+    const price = 'Make Offer';
 
     return {
       title: `${domainName} - ${headline} | ${brandName}`,
@@ -56,14 +56,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
         title: `${domainName} - ${price}`,
         description,
         type: 'website',
-        images: domainData?.image ? [
-          {
-            url: domainData.image,
-            width: 400,
-            height: 400,
-            alt: domainName,
-          }
-        ] : [
+        images: [
           {
             url: '/globe.svg',
             width: 400,
@@ -76,7 +69,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
         card: 'summary_large_image',
         title: `${domainName} - ${price}`,
         description,
-        images: domainData?.image ? [domainData.image] : ['/globe.svg'],
+        images: ['/globe.svg'],
       },
       alternates: {
         canonical: `/domain/${encodeURIComponent(domainName)}`,

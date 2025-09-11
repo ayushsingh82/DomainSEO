@@ -1,346 +1,200 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { domaAPI } from '@/lib/doma-api';
+import { useEffect, useState } from 'react';
+import { getOrderbookData } from '@/lib/doma-api-validated';
 
-interface OrderbookData {
-  totalListings: number;
-  totalOffers: number;
-  totalVolume: string;
-  recentActivity: Array<{
-    type: 'listing' | 'offer' | 'sale';
-    domain: string;
+interface Listing {
+  id: string;
+  tokenId: string;
+  name: string;
+  price: string;
+  offererAddress: string;
+  orderbook: string;
+  expiresAt: string;
+  createdAt: string;
+  currency: {
+    symbol: string;
+    decimals: number;
+  };
+  registrar: {
+    name: string;
+  };
+  chain: {
+    name: string;
+    networkId: string;
+  };
+}
+
+interface Activity {
+  __typename: string;
+  domainName?: string;
+  tokenId?: string;
+  createdAt?: string;
+  buyer?: string;
+  seller?: string;
+  payment?: {
     price: string;
-    currency: string;
-    timestamp: number;
-    participant: string;
-  }>;
-  topListings: Array<{
-    domain: string;
-    price: string;
-    currency: string;
-    seller: string;
-  }>;
-  topOffers: Array<{
-    domain: string;
-    price: string;
-    currency: string;
-    buyer: string;
-  }>;
+    currencySymbol: string;
+  };
 }
 
 export default function OrderbookPage() {
-  const [orderbook, setOrderbook] = useState<OrderbookData | null>(null);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [totalListings, setTotalListings] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'activity' | 'listings' | 'offers'>('activity');
 
   useEffect(() => {
-    async function fetchOrderbook() {
+    const fetchOrderbookData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await domaAPI.getOrderbookData();
-        setOrderbook(data);
+        const data = await getOrderbookData();
+        setListings(data.listings);
+        setActivities(data.activities);
+        setTotalListings(data.totalListings);
       } catch (err) {
-        console.error('Error fetching orderbook:', err);
+        console.error('Error fetching orderbook data:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch orderbook data');
       } finally {
         setLoading(false);
       }
-    }
+    };
 
-    fetchOrderbook();
+    fetchOrderbookData();
   }, []);
 
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'listing':
-        return (
-          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-            </svg>
-          </div>
-        );
-      case 'offer':
-        return (
-          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </div>
-        );
-      case 'sale':
-        return (
-          <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-            <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-          </div>
-        );
-      default:
-        return (
-          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-        );
+  const formatPrice = (price: string, currency: { symbol: string; decimals: number }) => {
+    const numPrice = parseFloat(price);
+    if (isNaN(numPrice)) return price;
+    
+    const formatted = (numPrice / Math.pow(10, currency.decimals)).toFixed(4);
+    return `${formatted} ${currency.symbol}`;
+  };
+
+  const formatAddress = (address: string) => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const formatActivityPrice = (activity: Activity) => {
+    if (activity.__typename === 'TokenPurchasedActivity' && activity.payment) {
+      const numPrice = parseFloat(activity.payment.price);
+      if (isNaN(numPrice)) return activity.payment.price;
+      
+      // Assume 18 decimals for ETH, 6 for USDC
+      const decimals = activity.payment.currencySymbol === 'USDC' ? 6 : 18;
+      const formatted = (numPrice / Math.pow(10, decimals)).toFixed(4);
+      return `${formatted} ${activity.payment.currencySymbol}`;
     }
+    return '';
   };
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 pt-16 pb-8">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-extrabold tracking-tight" style={{ color: '#0D2818' }}>Doma Orderbook</h1>
-          <p className="text-base mt-3" style={{ color: '#6B7280' }}>
-            Real-time marketplace activity and order data
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 rounded-xl h-48"></div>
-            </div>
-          ))}
-        </div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8 text-center">Doma Orderbook</h1>
+        <div className="text-center">Loading orderbook data...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 pt-16 pb-8">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-extrabold tracking-tight" style={{ color: '#0D2818' }}>Doma Orderbook</h1>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
-            <p className="text-red-600 font-medium">Error loading orderbook</p>
-            <p className="text-red-500 text-sm mt-1">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!orderbook) {
-    return (
-      <div className="container mx-auto px-4 pt-16 pb-8">
-        <div className="text-center">
-          <h1 className="text-5xl font-extrabold tracking-tight" style={{ color: '#0D2818' }}>Doma Orderbook</h1>
-          <p className="text-gray-500 mt-4">No orderbook data available</p>
-        </div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8 text-center">Doma Orderbook</h1>
+        <div className="text-center text-red-500">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 pt-16 pb-8">
-      <div className="text-center mb-8">
-        <h1 className="text-5xl font-extrabold tracking-tight" style={{ color: '#0D2818' }}>Doma Orderbook</h1>
-        <p className="text-base mt-3" style={{ color: '#6B7280' }}>
-          Real-time marketplace activity and order data
-        </p>
-      </div>
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500">Total Listings</p>
-              <p className="text-3xl font-bold text-gray-900">{orderbook.totalListings.toLocaleString()}</p>
-            </div>
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-blue-500">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-              </svg>
-            </div>
-          </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8 text-center">Doma Orderbook</h1>
+      
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold text-blue-800">Total Listings</h3>
+          <p className="text-2xl font-bold text-blue-600">{totalListings.toLocaleString()}</p>
         </div>
-
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500">Total Offers</p>
-              <p className="text-3xl font-bold text-gray-900">{orderbook.totalOffers.toLocaleString()}</p>
-            </div>
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-green-500">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-          </div>
+        <div className="bg-green-50 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold text-green-800">Active Listings</h3>
+          <p className="text-2xl font-bold text-green-600">{listings.length}</p>
         </div>
-
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500">Total Volume</p>
-              <p className="text-3xl font-bold text-gray-900">{orderbook.totalVolume}</p>
-            </div>
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#6603BF' }}>
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-          </div>
+        <div className="bg-purple-50 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold text-purple-800">Recent Activities</h3>
+          <p className="text-2xl font-bold text-purple-600">{activities.length}</p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex justify-center mb-8">
-        <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
-          {[
-            { key: 'activity', label: 'Recent Activity' },
-            { key: 'listings', label: 'Top Listings' },
-            { key: 'offers', label: 'Top Offers' }
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as 'activity' | 'listings' | 'offers')}
-              className={`px-6 py-3 text-sm font-medium rounded-md transition-colors ${
-                activeTab === tab.key
-                  ? 'text-white'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              style={activeTab === tab.key ? { backgroundColor: '#6603BF' } : {}}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Tab Content */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-100">
-        {activeTab === 'activity' && (
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Recent Activity</h3>
-            <div className="space-y-4">
-              {orderbook.recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    {getActivityIcon(activity.type)}
-                    <div className="ml-4">
-                      <div className="flex items-center">
-                        <span className="text-sm text-gray-500 capitalize mr-2">{activity.type}</span>
-                        <Link href={`/domain/${activity.domain}`} className="font-medium text-gray-900 hover:text-purple-600">
-                          {activity.domain}
-                        </Link>
-                      </div>
-                      <p className="text-sm text-gray-500">
-                        {new Date(activity.timestamp).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-900">{activity.price}</p>
-                    <p className="text-sm text-gray-500">
-                      {activity.participant.slice(0, 6)}...{activity.participant.slice(-4)}
-                    </p>
-                  </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Active Listings */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Active Listings</h2>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {listings.map((listing) => (
+              <div key={listing.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-semibold text-lg">{listing.name}</h3>
+                  <span className="text-green-600 font-bold">
+                    {formatPrice(listing.price, listing.currency)}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'listings' && (
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Top Listings</h3>
-            <div className="space-y-4">
-              {orderbook.topListings.map((listing, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white mr-4" style={{ backgroundColor: '#6603BF' }}>
-                      {index + 1}
-                    </div>
-                    <div>
-                      <Link href={`/domain/${listing.domain}`} className="font-medium text-gray-900 hover:text-purple-600">
-                        {listing.domain}
-                      </Link>
-                      <p className="text-sm text-gray-500">
-                        Seller: {listing.seller.slice(0, 6)}...{listing.seller.slice(-4)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold" style={{ color: '#6603BF' }}>{listing.price}</p>
-                    <p className="text-sm text-gray-500">{listing.currency}</p>
-                  </div>
+                
+                <div className="text-sm text-gray-600 space-y-1">
+                  <div>Seller: {formatAddress(listing.offererAddress)}</div>
+                  <div>Chain: {listing.chain.name}</div>
+                  <div>Registrar: {listing.registrar.name}</div>
+                  <div>Expires: {formatDate(listing.expiresAt)}</div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
 
-        {activeTab === 'offers' && (
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Top Offers</h3>
-            <div className="space-y-4">
-              {orderbook.topOffers.map((offer, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white mr-4 bg-green-500">
-                      {index + 1}
-                    </div>
-                    <div>
-                      <Link href={`/domain/${offer.domain}`} className="font-medium text-gray-900 hover:text-purple-600">
-                        {offer.domain}
-                      </Link>
-                      <p className="text-sm text-gray-500">
-                        Buyer: {offer.buyer.slice(0, 6)}...{offer.buyer.slice(-4)}
-                      </p>
-                    </div>
+        {/* Recent Activity */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {activities.map((activity, index) => (
+              <div key={index} className="border rounded-lg p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <span className="text-blue-600 font-medium">
+                      {activity.__typename.replace('Token', '').replace('Activity', '')}
+                    </span>
+                    {activity.domainName && (
+                      <div className="font-semibold">{activity.domainName}</div>
+                    )}
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-green-600">{offer.price}</p>
-                    <p className="text-sm text-gray-500">{offer.currency}</p>
-                  </div>
+                  {activity.__typename === 'TokenPurchasedActivity' && activity.payment && (
+                    <span className="text-green-600 font-bold">
+                      {formatActivityPrice(activity)}
+                    </span>
+                  )}
                 </div>
-              ))}
-            </div>
+                
+                <div className="text-sm text-gray-600 space-y-1">
+                  {activity.__typename === 'TokenPurchasedActivity' && (
+                    <>
+                      <div>Buyer: {formatAddress(activity.buyer || '')}</div>
+                      <div>Seller: {formatAddress(activity.seller || '')}</div>
+                      <div>Price: {formatActivityPrice(activity)}</div>
+                    </>
+                  )}
+                  {activity.__typename === 'TokenMintedActivity' && (
+                    <div>Minted: {activity.createdAt ? formatDate(activity.createdAt) : ''}</div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-      </div>
-
-      {/* Action Buttons */}
-      <div className="text-center mt-12 space-x-4">
-        <Link
-          href="/domains"
-          className="inline-flex items-center px-6 py-3 text-base font-medium text-white rounded-lg hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: '#6603BF' }}
-        >
-          Browse Domains
-          <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </Link>
-        
-        <Link
-          href="/offers"
-          className="inline-flex items-center px-6 py-3 text-base font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          style={{ color: '#6603BF' }}
-        >
-          View All Offers
-          <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </Link>
-        
-        <Link
-          href="/analytics"
-          className="inline-flex items-center px-6 py-3 text-base font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          style={{ color: '#6603BF' }}
-        >
-          Market Analytics
-          <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-        </Link>
+        </div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { domaAPI } from '@/lib/doma-api';
+import domaAPI from '@/lib/doma-api';
 
 interface OrderbookItem {
   name: string;
@@ -34,7 +34,7 @@ export default function DomainsPage() {
         const offset = (currentPage - 1) * itemsPerPage;
         
         // Fetch domains with pagination
-        const result = await domaAPI.getDomains(itemsPerPage, offset, query);
+        const result = await domaAPI.getDomains(itemsPerPage, offset);
         
         const domainItems: OrderbookItem[] = result.domains.map((domain: {
           name: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { domaAPI, DomainData, DomainAnalytics, DomainOffer, DomainListing } from '@/lib/doma-api';
+import domaAPI, { DomainData, DomainAnalytics, DomainOffer, DomainListing } from '@/lib/doma-api';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -58,11 +58,35 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
           return;
         }
 
-        setDomainData(data);
+        // Convert NameData to DomainData format for compatibility
+        const compatibleData: DomainData = {
+          name: data.name,
+          tld: data.name.split('.').pop() || '',
+          tokenId: undefined,
+          owner: data.claimedBy,
+          contractAddress: undefined,
+          chainId: undefined,
+          description: `Premium domain ${data.name} available on Doma Network`,
+          image: '/globe.svg', // Default image
+          listings: [],
+          offers: [],
+          floorPrice: '0',
+          lastSale: '0',
+          registrar: data.registrar,
+          nameServers: data.nameservers?.map(ns => ns.ldhName) || [],
+          expiryDate: data.expiresAt,
+          statistics: {
+            totalSales: 0,
+            totalVolume: '0',
+            averagePrice: '0',
+          },
+        };
+
+        setDomainData(compatibleData);
 
         // Fetch real analytics data
         try {
-          const analytics = await domaAPI.getDomainAnalytics(domainName);
+          const analytics = await domaAPI.getDomainAnalytics();
           setDomainAnalytics(analytics);
         } catch (analyticsError) {
           console.log('Analytics data not available for', domainName, analyticsError);
@@ -70,7 +94,7 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
 
         // Fetch real offers data
         try {
-          const offers = await domaAPI.getDomainOffers(domainName);
+          const offers = await domaAPI.getDomainOffers();
           setDomainOffers(offers);
         } catch (offersError) {
           console.log('Offers data not available for', domainName, offersError);
@@ -78,7 +102,7 @@ export default function DomainSalesPage({ domainName, customization }: DomainSal
 
         // Fetch real listings data
         try {
-          const listings = await domaAPI.getDomainListings(domainName);
+          const listings = await domaAPI.getDomainListings();
           setDomainListings(listings);
         } catch (listingsError) {
           console.log('Listings data not available for', domainName, listingsError);
