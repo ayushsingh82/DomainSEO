@@ -60,8 +60,8 @@ export default function OffersPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">Domain Offers</h1>
-        <div className="text-center">Loading offers...</div>
+        <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-black">Domain Offers</h1>
+        <div className="text-center text-black dark:text-black">Loading offers...</div>
       </div>
     );
   }
@@ -69,7 +69,7 @@ export default function OffersPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">Domain Offers</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-white">Domain Offers</h1>
         <div className="text-center text-red-500">Error: {error}</div>
       </div>
     );
@@ -77,25 +77,25 @@ export default function OffersPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Domain Offers</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-black">Domain Offers</h1>
       
       <div className="mb-6">
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-600">
           Total offers: {offers.length}
         </p>
       </div>
 
       {offers.length === 0 ? (
-        <div className="text-center text-gray-500 py-8">
+        <div className="text-center text-gray-500 dark:text-gray-400 py-8">
           No offers available at the moment.
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ">
           {offers.map((offer) => (
-            <div key={offer.id} className="border rounded-lg p-6 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-semibold mb-2">{offer.domainName}</h3>
+            <div key={offer.id} className="border bprder-green-300 rounded-lg p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-gray-200 to-gray-300">
+              <h3 className="text-xl font-semibold mb-2 text-black dark:text-black">{offer.domainName}</h3>
               
-              <div className="space-y-2 text-sm text-gray-600">
+              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-600">
                 <div>
                   <span className="font-medium">Price:</span>{' '}
                   <span className="text-green-600 font-bold">

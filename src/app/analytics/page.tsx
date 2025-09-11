@@ -59,8 +59,8 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">Domain Analytics</h1>
-        <div className="text-center">Loading analytics data...</div>
+        <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-black">Domain Analytics</h1>
+        <div className="text-center text-black dark:text-black">Loading analytics data...</div>
       </div>
     );
   }
@@ -68,7 +68,7 @@ export default function AnalyticsPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">Domain Analytics</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-black">Domain Analytics</h1>
         <div className="text-center text-red-500">Error: {error}</div>
       </div>
     );
@@ -77,15 +77,15 @@ export default function AnalyticsPage() {
   if (!analytics) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">Domain Analytics</h1>
-        <div className="text-center">No analytics data available</div>
+        <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-white">Domain Analytics</h1>
+        <div className="text-center text-black dark:text-white">No analytics data available</div>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Domain Analytics</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-black">Domain Analytics</h1>
       
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
@@ -130,12 +130,12 @@ export default function AnalyticsPage() {
 
       {/* Recent Listings */}
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">Recent Listings</h2>
+        <h2 className="text-2xl font-bold mb-6 text-black dark:text-black">Recent Listings</h2>
         
         <div className="overflow-x-auto">
           <table className="w-full table-auto">
             <thead>
-              <tr className="bg-gray-50">
+              <tr className="bg-gray-600">
                 <th className="px-4 py-3 text-left font-semibold">Domain</th>
                 <th className="px-4 py-3 text-left font-semibold">Price</th>
                 <th className="px-4 py-3 text-left font-semibold">Currency</th>
@@ -144,13 +144,13 @@ export default function AnalyticsPage() {
             </thead>
             <tbody>
               {analytics.listings.map((listing, index) => (
-                <tr key={listing.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                <tr key={listing.id} className={index % 2 === 0 ? 'bg-gray-400' : 'bg-gray-300'}>
                   <td className="px-4 py-3 font-medium">{listing.name}</td>
                   <td className="px-4 py-3 text-green-600 font-bold">
                     {formatPrice(listing.price, listing.currency)}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-1 bg-gray-100 rounded text-sm">
+                    <span className="px-2 py-1 bg-gray-600 rounded text-sm">
                       {listing.currency.symbol}
                     </span>
                   </td>
@@ -173,11 +173,11 @@ export default function AnalyticsPage() {
       {/* Market Insights */}
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-bold mb-4">Market Summary</h3>
+          <h3 className="text-xl font-bold mb-4 text-black dark:text-black">Market Summary</h3>
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-600">Listing Rate:</span>
-              <span className="font-semibold">
+              <span className="font-semibold text-green-600">
                 {((analytics.totalListings / analytics.totalDomains) * 100).toFixed(2)}%
               </span>
             </div>
@@ -187,23 +187,23 @@ export default function AnalyticsPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Network:</span>
-              <span className="font-semibold">Testnet</span>
+              <span className="font-semibold text-green-600">Testnet</span>
             </div>
           </div>
         </div>
         
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-bold mb-4">Price Analysis</h3>
+          <h3 className="text-xl font-bold mb-4 text-black dark:text-black">Price Analysis</h3>
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-600">Price Range:</span>
-              <span className="font-semibold">
+              <span className="font-semibold text-green-600">
                 {analytics.floorPrice} - {analytics.averagePrice}+
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Market Depth:</span>
-              <span className="font-semibold">{analytics.totalListings} listings</span>
+              <span className="font-semibold text-green-600">{analytics.totalListings} listings</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Liquidity:</span>

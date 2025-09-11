@@ -98,8 +98,8 @@ export default function OrderbookPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">Doma Orderbook</h1>
-        <div className="text-center">Loading orderbook data...</div>
+        <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-black">Doma Orderbook</h1>
+        <div className="text-center text-black dark:text-black">Loading orderbook data...</div>
       </div>
     );
   }
@@ -107,7 +107,7 @@ export default function OrderbookPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">Doma Orderbook</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-black">Doma Orderbook</h1>
         <div className="text-center text-red-500">Error: {error}</div>
       </div>
     );
@@ -115,7 +115,7 @@ export default function OrderbookPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Doma Orderbook</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-black dark:text-black">Doma Orderbook</h1>
       
       <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-blue-50 p-4 rounded-lg">
@@ -132,21 +132,21 @@ export default function OrderbookPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 ">
         {/* Active Listings */}
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Active Listings</h2>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
+        <div >
+          <h2 className="text-2xl font-bold mb-4 text-black dark:text-black">Active Listings</h2>
+          <div className="space-y-3 max-h-96 overflow-y-auto ">
             {listings.map((listing) => (
-              <div key={listing.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div key={listing.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-br from-gray-200 to-gray-300">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-lg">{listing.name}</h3>
+                  <h3 className="font-semibold text-lg text-black dark:text-b;ack">{listing.name}</h3>
                   <span className="text-green-600 font-bold">
                     {formatPrice(listing.price, listing.currency)}
                   </span>
                 </div>
                 
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm text-gray-600 dark:text-gray-600 space-y-1 ">
                   <div>Seller: {formatAddress(listing.offererAddress)}</div>
                   <div>Chain: {listing.chain.name}</div>
                   <div>Registrar: {listing.registrar.name}</div>
@@ -159,10 +159,10 @@ export default function OrderbookPage() {
 
         {/* Recent Activity */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
+          <h2 className="text-2xl font-bold mb-4 text-black dark:text-black">Recent Activity</h2>
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {activities.map((activity, index) => (
-              <div key={index} className="border rounded-lg p-4">
+              <div key={index} className="border rounded-lg p-4 bg-gradient-to-br from-gray-200 to-gray-300">
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <span className="text-blue-600 font-medium">
@@ -179,7 +179,7 @@ export default function OrderbookPage() {
                   )}
                 </div>
                 
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm text-gray-600 dark:text-gray-600 space-y-1 ">
                   {activity.__typename === 'TokenPurchasedActivity' && (
                     <>
                       <div>Buyer: {formatAddress(activity.buyer || '')}</div>
